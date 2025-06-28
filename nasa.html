@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="./assets/nasa.png" type="image/png">
+    <title>API de la NASA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double:wght@100..900&family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- Boostrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.7/spacelab/bootstrap.min.css" integrity="sha512-o6LgZzmSA9vluDimUYiZHs9kubw1SHOz1GCSFKrk+aklj0t//U3vGyhQE7SrWIsOMJdculv4X0SL0MDeFgTLQw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><img src="./assets/nasa.png" alt="NASA" style="height: 60px;"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor02">
+                <!-- Lo quitamos de mientras-->
+            </div>
+        </div>
+    </nav>
+    <section class="container">
+        <br>
+        <h3><i class="fas fa-camera"></i> Foto Astronomica del Dia</h3>
+        <p>Este endpoint muestra una foto astronomica de una fecha determinada</p>
+    </section>
+    <section class="container">
+        <form id="frmBuscar">
+            <div class="row mt-3">
+                <div class="col-4">
+                    <label for="fecha" class="form-lab">Fecha:</label>
+                    <input type="date" class="form-control" name="fecha" id="fecha">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-4">
+                    <button id="btnBuscar" class="btn btn-success btn-sm"><i class="fas fa-search"></i> Buscar</button>
+                </div>
+            </div>
+        </form>
+    </section>
+        <section class="container mt-3 mb-5">
+            <div class="row mt-3">
+                <h4 id="titulo"></h4>
+                <p id="descripcion"></p>
+                <img src="" alt="APOD" style="max-width: 50%;" id="foto">
+            </div>
+        </section>
+
+        <script type="text/javascript">
+
+            //Lo que ponga aqui es el listener de eventos y lo que se carga al inicio
+            $(function(){
+                //Evitamos el submit del formulario
+                $("#frmBuscar").submit(function(e){
+                    e.preventDefault();
+                })
+
+                //Le ponemos fecha del dia de hoy cuando se cargue la pagina
+                $("#fecha").val(new Date().toLocaleDateString('en-CA', {
+                    timeZone: 'America/Mexico_City'
+                }));
+                //Escondemos la foto rota
+                $("#foto").hide();
+                //escuchar el click del btn buscar
+                $("#btnBuscar").click(function(){
+                    cargarDatos();
+                });
+            })
+
+            //funcion que carga los datos de la api de la nasa
+            function cargarDatos(){
+
+                let fecha = $("#fecha").val();
+
+                //Verificamos que la fecha no este vacia
+
+                if (fecha = "") {
+                    alert("Debes teclear una fecha");
+                    return false;
+                }
+
+                //Aqui hacemos la peticion
+                $.ajax({
+                    url: 'https://api.nasa.gov/planetary/apod',
+                    method: 'GET',
+                    data: {
+                        api_key: 'DEMO_KEY',
+                        date: fecha
+                    },
+                    success: function(respuesta){
+                        console.log(respuesta);
+                        $("#titulo").text(respuesta.title);
+                        $("#descripcion").text(respuesta.explanation);
+                        $("#foto").attr("src", respuesta.url);
+                        $("#foto").show();
+
+                    },
+                    error: function(){
+                        alert("Error al cargar los datos");
+                    }
+                })
+
+            }
+
+        </script>
+
+</body>
+</html>
